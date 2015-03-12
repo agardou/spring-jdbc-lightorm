@@ -1,4 +1,4 @@
-package com.agaetis.spring.jdbc.lightorm.dao;
+package com.agaetis.spring.jdbc.lightorm.repository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ public class RegisteredDao {
 
 	private static RegisteredDao REGITERED_DAO;
 
-	private Map<Class<?>, AbstractAnnotatedBeanDao<?>> daoMap = new HashMap<Class<?>, AbstractAnnotatedBeanDao<?>>();
+	private Map<Class<?>, LightOrmCrudRepository<?>> daoMap = new HashMap<Class<?>, LightOrmCrudRepository<?>>();
 
 	private static RegisteredDao getRegisteredDao() {
 		if (REGITERED_DAO == null)
@@ -18,11 +18,11 @@ public class RegisteredDao {
 		return REGITERED_DAO;
 	}
 
-	public static void registerDao(AbstractAnnotatedBeanDao<?> dao) {
+	public static void registerDao(LightOrmCrudRepository<?> dao) {
 		getRegisteredDao().daoMap.put(dao.getTableClass(), dao);
 	}
 
-	public static AbstractAnnotatedBeanDao<?> getDao(Class<?> clazz) {
+	public static LightOrmCrudRepository<?> getDao(Class<?> clazz) {
 		return getRegisteredDao().daoMap.get(clazz);
 	}
 }

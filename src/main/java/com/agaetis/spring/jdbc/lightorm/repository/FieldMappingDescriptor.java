@@ -1,4 +1,4 @@
-package com.agaetis.spring.jdbc.lightorm.dao;
+package com.agaetis.spring.jdbc.lightorm.repository;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.agaetis.spring.jdbc.lightorm.annotation.Column;
 import com.agaetis.spring.jdbc.lightorm.annotation.Id;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 /**
  * Created by <a href="https://github.com/rnicob">Nicolas Roux</a> - <a href="http://www.agaetis.fr">Agaetis</a>  on 12/03/2015.
@@ -30,23 +31,23 @@ public class FieldMappingDescriptor {
 		initialize(clazz, field);
 	}
 
-	public Object readFieldValue(Object obj) throws DaoException {
+	public Object readFieldValue(Object obj) {
 		try {
 			return readMethod.invoke(obj);
 		} catch (IllegalAccessException e) {
-			throw new DaoException("Impossible de lire le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
+			throw new InvalidDataAccessResourceUsageException("Impossible de lire le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
 		} catch (InvocationTargetException e) {
-			throw new DaoException("Impossible de lire le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
+			throw new InvalidDataAccessResourceUsageException("Impossible de lire le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
 		}
 	}
 
-	public void writeFieldValue(Object obj, Object value) throws DaoException {
+	public void writeFieldValue(Object obj, Object value) {
 		try {
 			writeMethod.invoke(obj, value);
 		} catch (IllegalAccessException e) {
-			throw new DaoException("Impossible d'ecrire dans le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
+			throw new InvalidDataAccessResourceUsageException("Impossible d'ecrire dans le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
 		} catch (InvocationTargetException e) {
-			throw new DaoException("Impossible d'ecrire dans le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
+			throw new InvalidDataAccessResourceUsageException("Impossible d'ecrire dans le champ [" + getField().getName() + "] de l'objet [" + tableClass.getCanonicalName() + "]", e);
 		}
 	}
 

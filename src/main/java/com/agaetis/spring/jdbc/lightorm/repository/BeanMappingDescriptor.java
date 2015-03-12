@@ -1,9 +1,10 @@
-package com.agaetis.spring.jdbc.lightorm.dao;
+package com.agaetis.spring.jdbc.lightorm.repository;
 
 import com.agaetis.spring.jdbc.lightorm.annotation.Column;
 import com.agaetis.spring.jdbc.lightorm.annotation.Id;
 import com.agaetis.spring.jdbc.lightorm.annotation.Table;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -23,12 +24,12 @@ public class BeanMappingDescriptor<T> {
     private String escapedCharacter;
 
 
-    public BeanMappingDescriptor(Class<T> tableClass, String escapedCharacter) throws DaoException {
+    public BeanMappingDescriptor(Class<T> tableClass, String escapedCharacter) {
         this.escapedCharacter = escapedCharacter;
         initialize(tableClass);
     }
 
-    private void initialize(Class<T> tableClass) throws DaoException {
+    private void initialize(Class<T> tableClass) {
         this.tableClass = tableClass;
         retrieveTableName();
         retrieveFields();
@@ -47,15 +48,15 @@ public class BeanMappingDescriptor<T> {
         escapedTableName = escapedCharacter + tableName + escapedCharacter;
     }
 
-    private void retrieveFields() throws DaoException {
+    private void retrieveFields() {
         for (Field field : tableClass.getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(Column.class)) {
                 PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(tableClass, field.getName());
 
                 if(pd.getReadMethod()==null)
-                    throw new DaoException("Pas de getter pour le champ " + field.getName());
+                    throw new InvalidDataAccessResourceUsageException("Pas de getter pour le champ " + field.getName());
                 if(pd.getWriteMethod()==null)
-                    throw new DaoException("Pas de setter pour le champ " + field.getName());
+                    throw new InvalidDataAccessResourceUsageException("Pas de setter pour le champ " + field.getName());
 
                 FieldMappingDescriptor fieldMappingDescriptor = new FieldMappingDescriptor(tableClass, field, escapedCharacter);
 
@@ -75,17 +76,17 @@ public class BeanMappingDescriptor<T> {
             idAutoIncremented = fieldIdMappingDescriptors.get(0).isIdAutoIncrement();
     }
 
-    private boolean validateMappings() throws DaoException {
+    private boolean validateMappings() {
         // Il faut au moins un Id
         if(fieldIdMappingDescriptors.isEmpty())
-            throw new DaoException("No Id Field found on class " + tableClass.getCanonicalName());
+            throw new InvalidDataAccessResourceUsageException("No Id Field found on class " + tableClass.getCanonicalName());
 
 
         // Pas d'autoincrement s'il y a plusieurs clés
         if(fieldIdMappingDescriptors.size()>1)
         for(FieldMappingDescriptor fieldId : fieldIdMappingDescriptors) {
             if(fieldId.isIdAutoIncrement())
-                throw new DaoException("Impossible d'avoir un id autoIncrement sur plusieurs clés " + tableClass.getCanonicalName());
+                throw new InvalidDataAccessResourceUsageException("Impossible d'avoir un id autoIncrement sur plusieurs clés " + tableClass.getCanonicalName());
         }
 
         return true;
