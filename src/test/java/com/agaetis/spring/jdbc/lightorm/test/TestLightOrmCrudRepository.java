@@ -1,6 +1,5 @@
 package com.agaetis.spring.jdbc.lightorm.test;
 
-import com.agaetis.spring.jdbc.lightorm.repository.DaoException;
 import com.agaetis.spring.jdbc.lightorm.test.dao.CarDao;
 import com.agaetis.spring.jdbc.lightorm.test.model.Car;
 import org.junit.Test;

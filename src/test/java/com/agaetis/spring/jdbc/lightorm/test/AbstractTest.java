@@ -1,6 +1,5 @@
 package com.agaetis.spring.jdbc.lightorm.test;
 
-import com.agaetis.spring.jdbc.lightorm.repository.DaoException;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
